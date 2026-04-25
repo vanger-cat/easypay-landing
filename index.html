@@ -154,12 +154,12 @@
 
       <!-- FOUNDED BY STRIP -->
       <div class="mt-10 flex items-center gap-4">
-        <div class="flex -space-x-2">
-          <div class="avatar-sm" style="background: linear-gradient(135deg,#4338ca 0%, #7c3aed 55%, #10b981 100%);">АК</div>
-          <div class="avatar-sm" style="background: linear-gradient(135deg,#0ea5e9 0%, #6366f1 55%, #f472b6 100%);">АЕ</div>
+        <div class="flex -space-x-2" data-founders-avatars>
+          <div class="avatar-sm" data-founder="ae" style="background: linear-gradient(135deg,#0ea5e9 0%, #6366f1 55%, #f472b6 100%);">АЕ</div>
+          <div class="avatar-sm" data-founder="ak" style="background: linear-gradient(135deg,#4338ca 0%, #7c3aed 55%, #10b981 100%);">АК</div>
         </div>
-        <div class="text-sm text-slate-400">
-          Сделано <a href="#founders" class="text-slate-200 underline underline-offset-2 hover:text-white">Антоном Катковым</a> и <a href="#founders" class="text-slate-200 underline underline-offset-2 hover:text-white">Андреем Ерохиным</a>. Можно списаться напрямую.
+        <div class="text-sm text-slate-400" data-founders-text>
+          Сделано <a href="#founders" data-founder-link="ae" class="text-slate-200 underline underline-offset-2 hover:text-white">Андреем Ерохиным</a> и <a href="#founders" data-founder-link="ak" class="text-slate-200 underline underline-offset-2 hover:text-white">Антоном Катковым</a>. Можно списаться напрямую.
         </div>
       </div>
 
@@ -288,20 +288,20 @@
             <div class="avatar shrink-0" style="background: linear-gradient(135deg,#0ea5e9 0%, #6366f1 55%, #f472b6 100%);">АЕ</div>
             <div>
               <div class="text-2xl font-semibold tracking-tight">Андрей Ерохин</div>
-              <div class="text-sm text-slate-400 mt-1">Сооснователь · Продукт, разработка, интеграции</div>
+              <div class="text-sm text-slate-400 mt-1">Сооснователь · Продукт и инфраструктура</div>
               <div class="mt-3 flex flex-wrap gap-1.5">
-                <span class="pillar-tag">Платёжные интеграции</span>
-                <span class="pillar-tag">Stripe & крипта</span>
-                <span class="pillar-tag">Автоматизация</span>
+                <span class="pillar-tag">Продуктовый дизайн</span>
+                <span class="pillar-tag">Архитектура финансовой системы</span>
+                <span class="pillar-tag">AI-разработка</span>
               </div>
             </div>
           </div>
           <div class="mt-6 text-slate-300 space-y-3 leading-relaxed">
-            <p><span class="todo">TODO</span> Короткий абзац про профессиональный бэкграунд Андрея: технический опыт, продукты, где работал, что проектировал, сколько лет в индустрии.</p>
-            <p><span class="todo">TODO</span> Одно-два предложения про подход к разработке и интеграциям, и что Андрей считает признаком хорошей платёжной инфраструктуры.</p>
+            <p>Двадцать лет в продуктах для бизнеса. Строил партнёрские каналы для IBM и Adobe — учил партнёров создавать ценность через внедрение. Создал рабочее место руководителя на планшете — продукт занял 60% рынка с десятками крупных внедрений. Вместе с Антоном шесть лет развивал аналитический сервис для бизнес-клиентов: помогали им расти и понимать свой бизнес.</p>
+            <p>В EasyPay отвечает за продукт, пользовательский опыт и архитектуру финансовой системы. Строит платёжку как AI-native продукт: вместо роста команды — агентные пайплайны и контракты, которые позволяют двум фаундерам делать работу десяти.</p>
           </div>
           <blockquote class="mt-6 border-l-2 border-emerald-400/40 pl-4 text-slate-300 italic">
-            <span class="todo">TODO</span> Цитата от Андрея на 1–2 предложения — про инженерную культуру, надёжность или конкретный кейс из опыта.
+            «Сложность из бизнеса никуда не девается. Наша работа — взять её часть на себя.»
           </blockquote>
           <div class="mt-6 flex flex-wrap gap-3">
             <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
@@ -559,10 +559,10 @@
             <p class="mt-3 text-slate-300">Откройте Telegram-бот и пройдите демо за 5 минут. Без регистрации, без карты, без обязательств. Если подойдёт — продолжим разговор; если нет — никто никому ничего не должен.</p>
             <div class="mt-5 flex items-center gap-3">
               <div class="flex -space-x-2">
-                <div class="avatar-sm" style="background: linear-gradient(135deg,#4338ca 0%, #7c3aed 55%, #10b981 100%);">АК</div>
                 <div class="avatar-sm" style="background: linear-gradient(135deg,#0ea5e9 0%, #6366f1 55%, #f472b6 100%);">АЕ</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg,#4338ca 0%, #7c3aed 55%, #10b981 100%);">АК</div>
               </div>
-              <div class="text-sm text-slate-400">Антон и Андрей — на связи лично</div>
+              <div class="text-sm text-slate-400">Андрей и Антон — на связи лично</div>
             </div>
           </div>
           <div class="md:col-span-4 flex flex-wrap md:justify-end gap-3">
