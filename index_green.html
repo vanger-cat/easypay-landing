@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EasyPay — приём международных платежей для онлайн-бизнеса</title>
+  <meta name="description" content="EasyPay — приём международных платежей для онлайн-бизнеса. Stripe, крипта, рубли, выплаты в валюте. Попробуйте бесплатно через Telegram-бот за 5 минут — без регистрации и обязательств." />
+  <meta property="og:title" content="EasyPay — приём международных платежей для онлайн-бизнеса" />
+  <meta property="og:description" content="Попробуйте бесплатно через Telegram-бот за 5 минут — без регистрации и обязательств. Stripe, крипта, рубли, выплаты в валюте." />
+  <meta property="og:type" content="website" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --teal: #00897B;
+      --teal-deep: #0B3B45;
+      --teal-light: #26A69A;
+      --green: #4CAF50;
+      --gold: #D4AF37;
+      --surface: #ffffff;
+      --surface-hover: #F6F9F9;
+      --surface-input: #F4F6F7;
+      --text-primary: #1B2B30;
+      --text-secondary: #5A6B70;
+      --text-tertiary: #9AABAF;
+      --border: rgba(0,50,45,0.06);
+      --border-input: rgba(0,50,45,0.10);
+      --bg: linear-gradient(165deg, #0A3039 0%, #0B4B45 35%, #00897B 100%);
+      --ease: 260ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    html, body { font-family: 'DM Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body {
+      background: var(--bg);
+      background-attachment: fixed;
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: rgba(212,175,55,0.35); color: #fff; }
+
+    /* Headings → DM Serif Display, как в референсе */
+    h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; letter-spacing: -0.02em; }
+    h1 { line-height: 1.05; }
+    h2 { line-height: 1.1; }
+    /* Hero highlights остаются цветовым акцентом, но в стиле gold-italic */
+    .grad-text { color: #FFD480; font-style: italic; background: none; -webkit-background-clip: initial; background-clip: initial; }
+
+    /* Светлые «glass» карточки на teal-фоне (раньше были тёмные) */
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: none;
+      color: var(--text-primary);
+      box-shadow: 0 4px 24px rgba(0,30,25,0.10);
+      transition: transform var(--ease), box-shadow var(--ease);
+    }
+    /* Внутри светлых карточек переопределяем тёмные tailwind-цвета на читаемые тёмные на белом */
+    .glass h2, .glass h3, .glass h4, .glass .font-semibold { color: var(--text-primary); }
+    .glass .text-slate-300, .glass .text-slate-200, .glass .text-slate-400, .glass .text-slate-500 { color: var(--text-secondary) !important; }
+    .glass p { color: var(--text-secondary); }
+    .glass a.underline { color: var(--teal); text-decoration-color: rgba(0,137,123,0.4); }
+    .glass a.underline:hover { color: var(--teal-light); }
+    .glass .text-indigo-300, .glass .text-emerald-300 { color: var(--teal) !important; }
+
+    /* Hero фон-сетку убираем — в новом стиле её нет */
+    .grid-bg { background-image: none; mask-image: none; }
+
+    /* Eyebrow-чип на тёмном фоне */
+    .chip {
+      display: inline-flex; align-items: center; gap: .55rem;
+      padding: 7px 13px 7px 9px; border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.85); font-size: 12.5px; font-weight: 500;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 999px; background: var(--teal-light); box-shadow: 0 0 0 4px rgba(38,166,154,0.18); }
+
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] .chev { transform: rotate(180deg); }
+    .chev { transition: transform .2s ease; color: var(--teal); }
+
+    /* Primary CTA: teal → green */
+    a.btn-primary {
+      display: inline-flex; align-items: center; gap: .6rem;
+      padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 14px;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--green) 100%);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(0,137,123,0.35);
+      transition: all var(--ease);
+    }
+    a.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,137,123,0.5); }
+    a.btn-primary:active { transform: scale(0.98); }
+
+    /* Ghost / secondary — на тёмном фоне */
+    a.btn-secondary {
+      display: inline-flex; align-items: center; gap: .6rem;
+      padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 14px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+      color: #fff;
+      transition: all var(--ease);
+    }
+    a.btn-secondary:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.24); }
+
+    /* Eyebrow для секций */
+    .section-label {
+      letter-spacing: 0.18em; text-transform: uppercase; font-size: 11px; font-weight: 700;
+      color: var(--teal-light);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .section-label::before { content: ""; width: 18px; height: 1px; background: var(--teal-light); display: inline-block; }
+    /* Внутри светлых карточек eyebrow тоже читаем (например в audience) */
+    .glass .section-label { color: var(--teal); }
+    .glass .section-label::before { background: var(--teal); }
+
+    /* Числовые значки в карточках продукта/как работает */
+    .num-badge {
+      width: 2rem; height: 2rem; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      color: #fff; font-weight: 700;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,137,123,0.3);
+    }
+
+    /* Большие аватары основателей */
+    .avatar {
+      width: 96px; height: 96px; border-radius: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 2.1rem; letter-spacing: .02em;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--green) 100%);
+      color: #fff; box-shadow: 0 8px 24px rgba(0,137,123,0.3);
+      border: none;
+    }
+    .avatar-sm {
+      width: 36px; height: 36px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .85rem; color: white;
+      border: 2px solid #fff;
+    }
+
+    .todo {
+      display: inline-block; padding: 1px 7px; border-radius: 5px;
+      background: rgba(212,175,55,0.10); border: 1px dashed rgba(212,175,55,0.45);
+      color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    }
+
+    /* Pillar теги — teal на светлом фоне */
+    .pillar-tag {
+      display: inline-block; padding: 4px 10px; border-radius: 999px;
+      background: rgba(0,137,123,0.08); border: none;
+      color: var(--teal); font-size: 11.5px; font-weight: 500;
+    }
+
+    /* Цитаты основателей — стиль референса */
+    blockquote {
+      background: var(--surface-input);
+      border-left: 3px solid var(--teal) !important;
+      border-radius: 12px;
+      padding: 14px 16px !important;
+      color: var(--text-primary) !important;
+      font-style: italic;
+    }
+
+    /* Hero h1 — крупный серифный */
+    .hero-h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(40px, 6.5vw, 78px);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+    }
+
+    /* ----- Phone mockup (только desktop) ----- */
+    .phone-mock {
+      width: 360px; max-width: 100%;
+      margin: 0 auto;
+      border-radius: 36px;
+      background: linear-gradient(180deg, #1C2B30 0%, #0A1518 100%);
+      padding: 12px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(255,255,255,0.04);
+      transform: rotate(-2deg);
+      transition: transform 600ms var(--ease);
+    }
+    .phone-mock:hover { transform: rotate(0deg) translateY(-4px); }
+    .phone-screen {
+      border-radius: 26px;
+      background: var(--bg);
+      padding: 16px 12px 18px;
+      min-height: 600px;
+      overflow: hidden;
+    }
+    .phone-status { display: flex; justify-content: space-between; align-items: center;
+                    font-size: 11px; color: rgba(255,255,255,0.85); padding: 0 8px 14px; font-weight: 600; }
+    .pm-card { background: var(--surface); border-radius: 24px; padding: 18px; box-shadow: 0 4px 24px rgba(0,30,25,0.10); color: var(--text-primary); }
+    .pm-card + .pm-card { margin-top: 12px; }
+    .pm-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .pm-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+    .pm-section-meta { font-size: 11px; color: var(--text-tertiary); font-weight: 400; }
+    .pm-balance { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; font-size: 26px; color: var(--text-primary); letter-spacing: -0.01em; }
+    .pm-balance .cents { font-size: 18px; color: var(--text-tertiary); }
+    .pm-balance-label { font-size: 11.5px; color: var(--text-tertiary); margin-left: 6px; }
+    .pm-divider { height: 1px; background: var(--border); margin: 8px 0 6px; }
+    .pm-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; }
+    .pm-row + .pm-row { margin-top: 2px; }
+    .pm-row-icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: var(--teal); flex-shrink: 0; font-family: 'DM Serif Display', Georgia, serif; font-size: 22px; line-height: 1; }
+    .pm-row-icon.is-gold { background: linear-gradient(135deg, rgba(212,175,55,0.10), rgba(212,175,55,0.18)); color: var(--gold); }
+    .pm-row-body { flex: 1; min-width: 0; }
+    .pm-row-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .pm-row-sub { font-size: 11.5px; color: var(--text-tertiary); margin-top: 2px; }
+    .pm-row-value { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+    .pm-row-chev { color: var(--text-tertiary); opacity: 0.4; }
+    .pm-row.is-gold-row { background: linear-gradient(90deg, rgba(212,175,55,0.04), rgba(212,175,55,0.02)); border: 1px solid rgba(212,175,55,0.10); }
+    .pm-row.is-gold-row .pm-row-chev { color: var(--gold); opacity: 0.7; }
+    .pm-glow { position: absolute; left: 50%; bottom: -40px; transform: translateX(-50%); width: 70%; height: 80px; border-radius: 50%; background: rgba(212,175,55,0.18); filter: blur(40px); pointer-events: none; }
+
+    /* Brand mark в nav/footer */
+    .brand-mark {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--green) 100%);
+      display: grid; place-items: center;
+      box-shadow: 0 4px 16px rgba(0,137,123,0.4);
+    }
+    .brand-mark.sm { width: 28px; height: 28px; border-radius: 8px; }
+
+    /* Tailwind-перебивки для тёмных подложек hero/secondary блоков */
+    body .text-slate-300 { color: rgba(255,255,255,0.75); }
+    body .text-slate-400 { color: rgba(255,255,255,0.55); }
+    body .text-slate-500 { color: rgba(255,255,255,0.4); }
+    body .text-slate-200 { color: rgba(255,255,255,0.85); }
+
+    /* Audience large white card uses .glass too — внутри списков читаемые галочки */
+    .glass .text-slate-200 { color: var(--text-primary) !important; }
+    .glass li { color: var(--text-secondary); }
+
+    /* CTA блоки и try-card иногда имеют свои pseudo-фоны (inline style background) — оставляем */
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- NAV -->
+  <header class="relative z-20">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 flex items-center justify-between py-5">
+      <a href="#top" class="flex items-center gap-2.5">
+        <div class="brand-mark">
+          <svg viewBox="0 0 184 190" width="22" height="22" aria-label="EasyPay logo">
+            <g transform="translate(0,190) scale(0.1,-0.1)" fill="#ffffff">
+              <path d="M895 1800 c-37 -15 -64 -55 -81 -120 -34 -137 -110 -235 -306 -398 -179 -147 -258 -288 -258 -457 0 -139 44 -241 139 -328 93 -83 208 -127 331 -127 86 0 152 23 202 70 34 33 39 43 36 77 l-3 38 -110 -3 c-133 -5 -197 15 -272 82 -70 63 -93 115 -93 212 0 155 70 248 303 406 84 56 174 124 200 150 98 98 132 229 86 326 -31 64 -113 98 -174 72z"/>
+              <path d="M1236 1485 c-17 -9 -54 -43 -84 -75 -51 -57 -144 -124 -325 -235 -92 -56 -175 -134 -202 -190 -15 -29 -20 -61 -20 -117 0 -69 3 -81 30 -120 41 -57 112 -104 183 -119 112 -23 135 -31 158 -54 33 -33 33 -99 0 -144 -46 -61 -93 -88 -287 -160 -64 -24 -101 -59 -101 -95 -1 -112 246 -115 478 -7 215 101 344 236 380 398 48 219 -64 417 -263 463 -90 21 -200 -15 -261 -85 -53 -60 -46 -72 51 -77 96 -5 145 -27 200 -87 63 -70 86 -214 52 -328 -16 -52 -89 -173 -106 -173 -5 0 4 18 20 40 39 54 66 155 57 217 -18 132 -84 191 -279 249 -68 20 -97 51 -97 102 0 76 50 121 225 202 206 96 258 124 311 173 64 58 82 102 65 159 -21 69 -113 100 -185 63z"/>
+            </g>
+          </svg>
+        </div>
+        <span class="font-semibold tracking-tight" style="font-size:17px;">EasyPay</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-7 text-sm text-slate-300">
+        <a href="#problems" class="hover:text-white">Проблемы</a>
+        <a href="#founders" class="hover:text-white">Кто мы</a>
+        <a href="#product" class="hover:text-white">Что делаем</a>
+        <a href="#how" class="hover:text-white">Как работает</a>
+        <a href="#try" class="hover:text-white">Демо в боте</a>
+        <a href="#faq" class="hover:text-white">FAQ</a>
+      </nav>
+      <a href="https://t.me/easypay_onboarding_bot" class="btn-primary text-sm !py-2.5 !px-4">
+        Попробовать бесплатно
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="top" class="relative overflow-hidden">
+    <div class="relative mx-auto max-w-6xl px-5 md:px-8 pt-10 md:pt-20 pb-16 md:pb-24">
+      <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
+        <div>
+          <div class="chip mb-6">
+            <span class="dot"></span>
+            Двое фаундеров делают платёжную инфраструктуру для онлайн-бизнеса
+          </div>
+          <h1 class="hero-h1 max-w-4xl">
+            Принимайте платежи <span class="grad-text">из любой страны</span> — без своего юрлица и <span class="grad-text">головной боли</span>
+          </h1>
+          <p class="mt-6 text-lg md:text-xl text-slate-300 max-w-2xl">
+            EasyPay — это Антон и Андрей. Мы берём на себя всю инфраструктуру: Stripe, приём криптовалют и рублей, выплаты в удобной вам валюте, поддержку и переписку с банками. Один партнёр вместо десятка подрядчиков.
+          </p>
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="https://t.me/easypay_onboarding_bot" class="btn-primary">
+              Попробовать бесплатно через бота
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.5 4.5 2.5 12l7 2 2 7L21.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#try" class="btn-secondary">Что внутри бота</a>
+          </div>
+          <div class="mt-3 flex items-center gap-2 text-sm text-slate-400">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5L20 7" stroke="#26A69A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Бесплатно · без регистрации и карты · 5 минут в Telegram
+          </div>
+
+          <!-- FOUNDED BY STRIP -->
+          <div class="mt-10 flex items-center gap-4">
+            <div class="flex -space-x-2" data-founders-avatars>
+              <div class="avatar-sm" data-founder="ae" style="background: linear-gradient(135deg,#00897B 0%, #4CAF50 100%);">АЕ</div>
+              <div class="avatar-sm" data-founder="ak" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">АК</div>
+            </div>
+            <div class="text-sm text-slate-400" data-founders-text>
+              Сделано <a href="#founders" data-founder-link="ae" class="text-slate-200 underline underline-offset-2 hover:text-white">Андреем Ерохиным</a> и <a href="#founders" data-founder-link="ak" class="text-slate-200 underline underline-offset-2 hover:text-white">Антоном Катковым</a>. Можно списаться напрямую.
+            </div>
+          </div>
+        </div>
+
+        <!-- PHONE MOCKUP (desktop only) -->
+        <div class="hidden lg:block relative">
+          <div class="phone-mock">
+            <div class="phone-screen relative">
+              <div class="phone-status">
+                <span>9:41</span>
+                <span style="display:inline-flex; gap:4px; align-items:center;">
+                  <svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor"><rect x="0" y="6" width="2" height="4" rx="0.5"/><rect x="4" y="4" width="2" height="6" rx="0.5"/><rect x="8" y="2" width="2" height="8" rx="0.5"/><rect x="12" y="0" width="2" height="10" rx="0.5"/></svg>
+                  <svg width="22" height="10" viewBox="0 0 22 10" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="18" height="9" rx="2"/><rect x="2" y="2" width="14" height="6" rx="1" fill="currentColor"/><rect x="20" y="3" width="1.5" height="4" rx="0.5" fill="currentColor"/></svg>
+                </span>
+              </div>
+
+              <!-- Balance card -->
+              <div class="pm-card">
+                <div class="pm-section-head">
+                  <span class="pm-section-title">Accounts</span>
+                  <span class="pm-section-meta">updated Apr 25, 10:43 PM</span>
+                </div>
+                <div>
+                  <span class="pm-balance">$24,123<span class="cents">.32</span></span>
+                  <span class="pm-balance-label">total balance</span>
+                </div>
+                <div class="pm-divider"></div>
+                <div class="pm-row">
+                  <div class="pm-row-icon">$</div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">USD</div>
+                    <div class="pm-row-sub">Wire & card payments</div>
+                  </div>
+                  <div class="pm-row-value">$1,000.00</div>
+                </div>
+                <div class="pm-row">
+                  <div class="pm-row-icon">₽</div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">RUB</div>
+                    <div class="pm-row-sub">Payment links</div>
+                  </div>
+                  <div class="pm-row-value">₽150,000</div>
+                </div>
+                <div class="pm-row">
+                  <div class="pm-row-icon">₮</div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">Crypto</div>
+                    <div class="pm-row-sub">USDT · USDC</div>
+                  </div>
+                  <div class="pm-row-value">$21,000.00</div>
+                </div>
+              </div>
+
+              <!-- Actions card -->
+              <div class="pm-card">
+                <div class="pm-section-head">
+                  <span class="pm-section-title">Collect Payments</span>
+                </div>
+                <div class="pm-row">
+                  <div class="pm-row-icon" style="background:rgba(0,137,123,0.08);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg></div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">Add Stripe Payment Link</div>
+                    <div class="pm-row-sub">Card & subscription payments</div>
+                  </div>
+                  <div class="pm-row-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></div>
+                </div>
+                <div class="pm-row">
+                  <div class="pm-row-icon" style="background:rgba(0,137,123,0.08);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">Create Bank Invoice</div>
+                    <div class="pm-row-sub">US & international bank transfer</div>
+                  </div>
+                  <div class="pm-row-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></div>
+                </div>
+                <div class="pm-row">
+                  <div class="pm-row-icon" style="background:rgba(0,137,123,0.08);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3z"/></svg></div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">Create RUB Payment Link</div>
+                    <div class="pm-row-sub">Cards & SBP for Russian clients</div>
+                  </div>
+                  <div class="pm-row-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></div>
+                </div>
+                <div class="pm-divider"></div>
+                <div class="pm-section-head" style="margin-top:8px;">
+                  <span class="pm-section-title">Withdraw</span>
+                </div>
+                <div class="pm-row is-gold-row">
+                  <div class="pm-row-icon is-gold"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0-5-5m5 5 5-5M4 20h16"/></svg></div>
+                  <div class="pm-row-body">
+                    <div class="pm-row-title">Request Payout</div>
+                    <div class="pm-row-sub">USD, RUB or crypto</div>
+                  </div>
+                  <div class="pm-row-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></div>
+                </div>
+              </div>
+            </div>
+            <div class="pm-glow"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VALUE STRIP -->
+      <div class="mt-12 md:mt-16 glass rounded-2xl p-5 md:p-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <div class="text-2xl md:text-3xl font-bold tracking-tight">Stripe</div>
+          <div class="text-sm text-slate-400 mt-1">Основной процессинг — карты, Apple/Google Pay, SEPA</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-bold tracking-tight">135+ валют</div>
+          <div class="text-sm text-slate-400 mt-1">Приём платежей по всему миру</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-bold tracking-tight">USDT · ETH · ₽</div>
+          <div class="text-sm text-slate-400 mt-1">Крипта и рубли поверх основной инфраструктуры</div>
+        </div>
+        <div>
+          <div class="text-2xl md:text-3xl font-bold tracking-tight">3 дня</div>
+          <div class="text-sm text-slate-400 mt-1">От первого сообщения до боевого платежа</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEMS -->
+  <section id="problems" class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="section-label mb-3">Проблемы, которые мы решаем</div>
+      <h2 class="text-3xl md:text-5xl font-bold tracking-tight max-w-3xl">Принять деньги из-за рубежа — сложнее, чем кажется</h2>
+      <p class="mt-4 text-slate-300 max-w-2xl">Особенно если вы работаете из СНГ, продаёте курсы, услуги, SaaS или консультации международной аудитории.</p>
+
+      <div class="mt-10 grid md:grid-cols-3 gap-5">
+        <div class="glass rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-400/25 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.4 0Z" stroke="#fda4af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg">Нет юрлица за границей</h3>
+          <p class="mt-2 text-slate-400 text-sm leading-relaxed">Stripe, PayPal, Paddle и другие сервисы требуют компанию в США, ЕС или Великобритании. Открывать самому — долго, дорого, с бухгалтерией и налогами.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-400/25 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 1v22M5 8h9a4 4 0 0 1 0 8H6a4 4 0 0 0 0 8h12" stroke="#fcd34d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg">Деньги не доходят до вас</h3>
+          <p class="mt-2 text-slate-400 text-sm leading-relaxed">Выплаты из США в страны СНГ упираются в SWIFT, комплаенс, двойные конвертации и комиссии. Результат — минус 3–7% и недели ожидания.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-400/25 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 7h18M3 12h18M3 17h12" stroke="#a5b4fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg">Зоопарк подрядчиков</h3>
+          <p class="mt-2 text-slate-400 text-sm leading-relaxed">Отдельно Stripe, отдельно крипто-процессинг, отдельно рубли, отдельно юрист, отдельно бухгалтер. Каждая интеграция, контракт и точка отказа — ваша.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1" stroke="#26A69A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg">Разные рынки — разные способы оплаты</h3>
+          <p class="mt-2 text-slate-400 text-sm leading-relaxed">В США — карты и Apple Pay. В ЕС — SEPA и iDEAL. В Азии — местные кошельки. В СНГ — рубли, СБП, крипта. Одним шлюзом это не закрыть.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/25 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0" stroke="#67e8f9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg">Заблокированные платежи и чарджбэки</h3>
+          <p class="mt-2 text-slate-400 text-sm leading-relaxed">Радар Stripe заворачивает платежи, клиенты недовольны, а вы — один на один с поддержкой на английском и формальными формулировками отказов.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="w-10 h-10 rounded-xl bg-fuchsia-500/15 border border-fuchsia-400/25 flex items-center justify-center mb-4">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z" stroke="#f0abfc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="font-semibold text-lg">Всё это забирает время у основателя</h3>
+          <p class="mt-2 text-slate-400 text-sm leading-relaxed">Вместо продукта и клиентов вы разбираетесь с KYC, политиками рисковых категорий, возвратами и налоговыми уведомлениями.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDERS — moved up, expanded -->
+  <section id="founders" class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="section-label mb-3">Кто мы</div>
+      <h2 class="text-3xl md:text-5xl font-bold tracking-tight max-w-3xl">За EasyPay стоят два конкретных человека, а не анонимный «сервис»</h2>
+      <p class="mt-4 text-slate-300 max-w-2xl">Мы — продуктовые предприниматели, которые сами через всё это прошли: открывали юрлица, бились со Stripe, выводили деньги через крипту и Wise. Поэтому EasyPay — это сервис, которым мы хотели бы пользоваться сами.</p>
+
+      <div class="mt-10 grid md:grid-cols-2 gap-6">
+        <!-- ANTON -->
+        <div class="glass rounded-3xl p-7 md:p-8">
+          <div class="flex items-start gap-5">
+            <div class="avatar shrink-0">АК</div>
+            <div>
+              <div class="text-2xl font-semibold tracking-tight">Антон Катков</div>
+              <div class="text-sm text-slate-400 mt-1">Сооснователь · Бизнес, клиенты, операционка</div>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="pillar-tag">Партнёрские отношения</span>
+                <span class="pillar-tag">Финансовая операционка</span>
+                <span class="pillar-tag">Развитие продукта</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 text-slate-300 space-y-3 leading-relaxed">
+            <p><span class="todo">TODO</span> Короткий абзац про профессиональный бэкграунд Антона: предыдущие продукты, компании, роли, сколько лет в продуктовой и предпринимательской работе, ключевые достижения и цифры.</p>
+            <p><span class="todo">TODO</span> Одно-два предложения про личную мотивацию и принципы в работе с партнёрами. Что для Антона значит «по-человечески сделать платёжку».</p>
+          </div>
+          <blockquote class="mt-6 border-l-2 border-indigo-400/40 pl-4 text-slate-300 italic">
+            <span class="todo">TODO</span> Цитата от Антона на 1–2 предложения — про подход или ценность EasyPay. Что-то живое, не маркетинговое.
+          </blockquote>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.5 4.5 2.5 12l7 2 2 7L21.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Telegram
+              <span class="todo ml-1">TODO @handle</span>
+            </a>
+            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 1 0-4 0v7h-4v-7a6 6 0 0 1 6-6ZM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              LinkedIn
+              <span class="todo ml-1">TODO link</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ANDREY -->
+        <div class="glass rounded-3xl p-7 md:p-8">
+          <div class="flex items-start gap-5">
+            <div class="avatar shrink-0" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">АЕ</div>
+            <div>
+              <div class="text-2xl font-semibold tracking-tight">Андрей Ерохин</div>
+              <div class="text-sm text-slate-400 mt-1">Сооснователь · Продукт и инфраструктура</div>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                <span class="pillar-tag">Продуктовый дизайн</span>
+                <span class="pillar-tag">Архитектура финансовой системы</span>
+                <span class="pillar-tag">AI-разработка</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 text-slate-300 space-y-3 leading-relaxed">
+            <p>Двадцать лет в продуктах для бизнеса. Строил партнёрские каналы для IBM и Adobe — учил партнёров создавать ценность через внедрение. Создал рабочее место руководителя на планшете — продукт занял 60% рынка с десятками крупных внедрений. Вместе с Антоном шесть лет развивал аналитический сервис для бизнес-клиентов: помогали им расти и понимать свой бизнес.</p>
+            <p>В EasyPay отвечает за продукт, пользовательский опыт и архитектуру финансовой системы. Строит платёжку как AI-native продукт: вместо роста команды — агентные пайплайны и контракты, которые позволяют двум фаундерам делать работу десяти.</p>
+          </div>
+          <blockquote class="mt-6 border-l-2 border-emerald-400/40 pl-4 text-slate-300 italic">
+            «Сложность из бизнеса никуда не девается. Наша работа — взять её часть на себя.»
+          </blockquote>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.5 4.5 2.5 12l7 2 2 7L21.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Telegram
+              <span class="todo ml-1">TODO @handle</span>
+            </a>
+            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 1 0-4 0v7h-4v-7a6 6 0 0 1 6-6ZM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              LinkedIn
+              <span class="todo ml-1">TODO link</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- WHY US BY HUMANS -->
+      <div class="mt-10 grid md:grid-cols-3 gap-5">
+        <div class="glass rounded-2xl p-6">
+          <div class="text-sm text-indigo-300 font-semibold">Прямой контакт, без первой линии</div>
+          <p class="mt-3 text-slate-300 leading-relaxed text-sm">Вы пишете нам в Telegram и получаете ответ от того же человека, который принимает решения. Никаких тикетов, никаких скриптов.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="text-sm text-indigo-300 font-semibold">Мы сами — пользователи</div>
+          <p class="mt-3 text-slate-300 leading-relaxed text-sm">У нас за плечами свои онлайн-продукты и Stripe-аккаунты. Мы знаем, где Stripe больно тыкает, и как из этого выходить.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="text-sm text-indigo-300 font-semibold">Договариваемся, а не «оформляем заявку»</div>
+          <p class="mt-3 text-slate-300 leading-relaxed text-sm">Условия, комиссии, формат выплат обсуждаем под ваш кейс на берегу. Никаких сюрпризов в личном кабинете, которого нет.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCT -->
+  <section id="product" class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="grid md:grid-cols-12 gap-8 md:gap-12">
+        <div class="md:col-span-5">
+          <div class="section-label mb-3">Что делает EasyPay</div>
+          <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Готовая платёжная инфраструктура «под ключ»</h2>
+          <p class="mt-5 text-slate-300">Вы получаете рабочий Stripe-аккаунт, настроенный под ваш бизнес, плюс всё, чего самому Stripe не хватает: крипту, рубли, поддержку и выплаты в удобной вам валюте.</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="https://t.me/easypay_onboarding_bot" class="btn-primary">Посмотреть условия</a>
+          </div>
+        </div>
+
+        <div class="md:col-span-7 grid sm:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3"><span class="num-badge">1</span><div class="font-semibold">Stripe-аккаунт</div></div>
+            <p class="mt-3 text-sm text-slate-400 leading-relaxed">Приём карт, Apple Pay, Google Pay, SEPA, iDEAL, Bancontact и десятков локальных способов оплаты по всему миру.</p>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3"><span class="num-badge">2</span><div class="font-semibold">Юридическая обвязка</div></div>
+            <p class="mt-3 text-sm text-slate-400 leading-relaxed">Вы работаете под нашей платёжной инфраструктурой — без открытия LLC, без американской бухгалтерии и налоговой отчётности на себе.</p>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3"><span class="num-badge">3</span><div class="font-semibold">Крипто-процессинг</div></div>
+            <p class="mt-3 text-sm text-slate-400 leading-relaxed">USDT (TRC-20, ERC-20), ETH — с автоматической обработкой и привязкой платежа к заказу в вашей системе.</p>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3"><span class="num-badge">4</span><div class="font-semibold">Приём рублей</div></div>
+            <p class="mt-3 text-sm text-slate-400 leading-relaxed">СБП и карточный эквайринг через российский банк — для клиентов из РФ, отдельной платёжной страницей.</p>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3"><span class="num-badge">5</span><div class="font-semibold">Выплаты в валюте</div></div>
+            <p class="mt-3 text-sm text-slate-400 leading-relaxed">Мы выводим ваш баланс на ваш реквизит — USDT, USD/EUR через Wise, SWIFT или локальные способы. Без двойных конвертаций.</p>
+          </div>
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center gap-3"><span class="num-badge">6</span><div class="font-semibold">Интеграции и бэк-офис</div></div>
+            <p class="mt-3 text-sm text-slate-400 leading-relaxed">Подключение к GetCourse, выдача доступов по оплате, настройка webhooks, помощь с возвратами и чарджбэками.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR WHOM -->
+  <section class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-10 md:py-16">
+      <div class="glass rounded-3xl p-8 md:p-12">
+        <div class="section-label mb-3">Для кого</div>
+        <h2 class="text-2xl md:text-4xl font-bold tracking-tight">EasyPay подходит, если вы —</h2>
+        <div class="mt-8 grid md:grid-cols-2 gap-6">
+          <ul class="space-y-3 text-slate-200">
+            <li class="flex gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-xs">✓</span>онлайн-школа или продюсерский центр, продающий курсы международной аудитории</li>
+            <li class="flex gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-xs">✓</span>SaaS-продукт, который хочет принимать подписки по картам и SEPA</li>
+            <li class="flex gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-xs">✓</span>консультант, коуч, терапевт с клиентами в Европе и США</li>
+          </ul>
+          <ul class="space-y-3 text-slate-200">
+            <li class="flex gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-xs">✓</span>студия, агентство или продакшен, работающий с зарубежными заказчиками</li>
+            <li class="flex gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-xs">✓</span>digital-сервис с оплатами от пользователей из разных стран</li>
+            <li class="flex gap-3"><span class="mt-1 w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-xs">✓</span>основатель, который хочет заниматься продуктом, а не инфраструктурой</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="section-label mb-3">Как это работает</div>
+      <h2 class="text-3xl md:text-5xl font-bold tracking-tight">От заявки до первого платежа — за 3 дня</h2>
+
+      <div class="mt-10 grid md:grid-cols-4 gap-5">
+        <div class="glass rounded-2xl p-6">
+          <span class="num-badge">1</span>
+          <h3 class="mt-4 font-semibold">Демо в боте</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">Сами проходите онбординг в Telegram: покажем платёжную страницу под ваш бизнес, посчитаем комиссии и дадим попробовать тестовый платёж. Бесплатно и без обязательств.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <span class="num-badge">2</span>
+          <h3 class="mt-4 font-semibold">Настройка</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">Заводим вам Stripe-аккаунт под нашей платёжной инфраструктурой, настраиваем методы оплаты и нужные интеграции.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <span class="num-badge">3</span>
+          <h3 class="mt-4 font-semibold">Запуск</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">Подключаем платёжную форму к вашему сайту, курсу или боту. Проверяем тестовый и боевой платежи, передаём доступы.</p>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <span class="num-badge">4</span>
+          <h3 class="mt-4 font-semibold">Операционка</h3>
+          <p class="mt-2 text-sm text-slate-400 leading-relaxed">Делаем выплаты, отвечаем на вопросы клиентов, разбираемся с отказами, поддерживаем работу 7 дней в неделю.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRY THE BOT -->
+  <section id="try" class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-16 md:py-24">
+      <div class="glass rounded-3xl p-8 md:p-14 overflow-hidden relative">
+        <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 60% 80% at 0% 0%, rgba(0,137,123,.18), transparent 60%), radial-gradient(ellipse 50% 60% at 100% 100%, rgba(212,175,55,.10), transparent 60%);"></div>
+
+        <div class="relative grid md:grid-cols-12 gap-8 md:gap-12 items-start">
+          <div class="md:col-span-5">
+            <div class="chip mb-5">
+              <span class="dot"></span>
+              Бесплатное демо в Telegram
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Попробуйте прямо сейчас — <span class="grad-text">бесплатно</span></h2>
+            <p class="mt-5 text-slate-300 leading-relaxed">В Telegram-боте можно самостоятельно пройти онбординг: настроить демо под свой бизнес, увидеть, как будет выглядеть платёжная страница, получить расчёт комиссий и попробовать тестовую оплату — как это будет видеть ваш клиент.</p>
+
+            <div class="mt-7">
+              <a href="https://t.me/easypay_onboarding_bot" class="btn-primary">
+                Открыть бота в Telegram
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.5 4.5 2.5 12l7 2 2 7L21.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 gap-2 text-sm text-slate-300">
+              <div class="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5L20 7" stroke="#26A69A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Бесплатно — мы ничего не списываем
+              </div>
+              <div class="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5L20 7" stroke="#26A69A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Без карты, без регистрации, без обязательств
+              </div>
+              <div class="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m5 12 5 5L20 7" stroke="#26A69A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                5 минут на демо, дальше — по желанию
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-7">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="glass rounded-2xl p-5">
+                <div class="flex items-center gap-3"><span class="num-badge">1</span><div class="font-semibold">Платёжная страница под ваш бизнес</div></div>
+                <p class="mt-3 text-sm text-slate-400 leading-relaxed">Бот соберёт минимум данных и покажет, как платёжная форма будет выглядеть для ваших клиентов — с вашим названием и нужной валютой.</p>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="flex items-center gap-3"><span class="num-badge">2</span><div class="font-semibold">Расчёт комиссий</div></div>
+                <p class="mt-3 text-sm text-slate-400 leading-relaxed">Покажем, сколько вы будете получать на руки в зависимости от способа оплаты, географии клиентов и валюты выплат.</p>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="flex items-center gap-3"><span class="num-badge">3</span><div class="font-semibold">Тестовый платёж</div></div>
+                <p class="mt-3 text-sm text-slate-400 leading-relaxed">Сгенерируем тестовую ссылку — пройдёте оплату как клиент, увидите квитанцию и поймёте весь сценарий до запуска.</p>
+              </div>
+              <div class="glass rounded-2xl p-5">
+                <div class="flex items-center gap-3"><span class="num-badge">4</span><div class="font-semibold">Личный ответ от нас</div></div>
+                <p class="mt-3 text-sm text-slate-400 leading-relaxed">Если останутся вопросы — мы с Андреем уже на той стороне. Никакой первой линии и автоответов.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="relative">
+    <div class="mx-auto max-w-4xl px-5 md:px-8 py-16 md:py-24">
+      <div class="section-label mb-3">FAQ</div>
+      <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Частые вопросы</h2>
+
+      <div class="mt-8 space-y-3">
+        <details class="glass rounded-2xl p-5 md:p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Как устроена работа со Stripe-аккаунтом?</span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <p class="mt-4 text-slate-300 leading-relaxed">Stripe-аккаунт оформлен на нашу инфраструктуру, а экономически — это ваш баланс. Мы ведём учёт по каждому партнёру и регулярно делаем выплаты в удобной вам валюте по согласованному формату.</p>
+        </details>
+        <details class="glass rounded-2xl p-5 md:p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Какие комиссии?</span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <p class="mt-4 text-slate-300 leading-relaxed">Комиссия EasyPay накладывается поверх комиссии процессора (Stripe, крипто-процессинга, банка по рублям). Точные цифры зависят от вашего оборота, географии клиентов и выбранных способов оплаты — обсуждаем индивидуально до старта.</p>
+        </details>
+        <details class="glass rounded-2xl p-5 md:p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Как и когда я получаю деньги?</span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <p class="mt-4 text-slate-300 leading-relaxed">Мы делаем выплаты по согласованному графику — обычно раз в неделю или по запросу от определённой суммы. Варианты: USDT (TRC-20/ERC-20), USD/EUR через Wise, SWIFT, локальные способы.</p>
+        </details>
+        <details class="glass rounded-2xl p-5 md:p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Какие бизнесы вы не подключаете?</span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <p class="mt-4 text-slate-300 leading-relaxed">Мы не работаем с категориями, которые запрещены политиками Stripe и нашими внутренними правилами: взрослый контент, незаконные услуги, азартные игры без лицензии и т. п. В сложных и сенситивных нишах решаем индивидуально.</p>
+        </details>
+        <details class="glass rounded-2xl p-5 md:p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="font-semibold">Что если Stripe заблокирует платёж или аккаунт?</span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <p class="mt-4 text-slate-300 leading-relaxed">Мы ведём переписку со Stripe сами: отвечаем на запросы комплаенса, предоставляем документы, оспариваем чарджбэки. Это часть работы и включено в комиссию.</p>
+        </details>
+        <details class="glass rounded-2xl p-5 md:p-6">
+          <summary class="flex items-center justify-between gap-4">
+            <span class="font-semibold">С чего начать?</span>
+            <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <p class="mt-4 text-slate-300 leading-relaxed">Самый простой путь — открыть <a class="underline underline-offset-2 text-indigo-300" href="https://t.me/easypay_onboarding_bot">@easypay_onboarding_bot</a> и пройти бесплатное демо: 5 минут, без регистрации и обязательств. Бот покажет, как сервис будет работать у вас, посчитает комиссии и даст попробовать тестовый платёж. Если останутся вопросы — мы с Андреем ответим лично в течение рабочего дня.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="relative">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 pb-16 md:pb-24">
+      <div class="glass rounded-3xl p-8 md:p-14 overflow-hidden relative">
+        <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 60% 80% at 100% 0%, rgba(0,137,123,.20), transparent 60%), radial-gradient(ellipse 50% 60% at 0% 100%, rgba(212,175,55,.12), transparent 60%);"></div>
+        <div class="relative grid md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-8">
+            <h3 class="text-2xl md:text-4xl font-bold tracking-tight">Попробуйте EasyPay прямо сейчас — бесплатно</h3>
+            <p class="mt-3 text-slate-300">Откройте Telegram-бот и пройдите демо за 5 минут. Без регистрации, без карты, без обязательств. Если подойдёт — продолжим разговор; если нет — никто никому ничего не должен.</p>
+            <div class="mt-5 flex items-center gap-3">
+              <div class="flex -space-x-2">
+                <div class="avatar-sm" style="background: linear-gradient(135deg,#00897B 0%, #4CAF50 100%);">АЕ</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">АК</div>
+              </div>
+              <div class="text-sm text-slate-400">Андрей и Антон — на связи лично</div>
+            </div>
+          </div>
+          <div class="md:col-span-4 flex flex-wrap md:justify-end gap-3">
+            <a href="https://t.me/easypay_onboarding_bot" class="btn-primary">Попробовать бесплатно</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/5">
+    <div class="mx-auto max-w-6xl px-5 md:px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <div class="brand-mark sm">
+          <svg viewBox="0 0 184 190" width="18" height="18" aria-label="EasyPay logo">
+            <g transform="translate(0,190) scale(0.1,-0.1)" fill="#ffffff">
+              <path d="M895 1800 c-37 -15 -64 -55 -81 -120 -34 -137 -110 -235 -306 -398 -179 -147 -258 -288 -258 -457 0 -139 44 -241 139 -328 93 -83 208 -127 331 -127 86 0 152 23 202 70 34 33 39 43 36 77 l-3 38 -110 -3 c-133 -5 -197 15 -272 82 -70 63 -93 115 -93 212 0 155 70 248 303 406 84 56 174 124 200 150 98 98 132 229 86 326 -31 64 -113 98 -174 72z"/>
+              <path d="M1236 1485 c-17 -9 -54 -43 -84 -75 -51 -57 -144 -124 -325 -235 -92 -56 -175 -134 -202 -190 -15 -29 -20 -61 -20 -117 0 -69 3 -81 30 -120 41 -57 112 -104 183 -119 112 -23 135 -31 158 -54 33 -33 33 -99 0 -144 -46 -61 -93 -88 -287 -160 -64 -24 -101 -59 -101 -95 -1 -112 246 -115 478 -7 215 101 344 236 380 398 48 219 -64 417 -263 463 -90 21 -200 -15 -261 -85 -53 -60 -46 -72 51 -77 96 -5 145 -27 200 -87 63 -70 86 -214 52 -328 -16 -52 -89 -173 -106 -173 -5 0 4 18 20 40 39 54 66 155 57 217 -18 132 -84 191 -279 249 -68 20 -97 51 -97 102 0 76 50 121 225 202 206 96 258 124 311 173 64 58 82 102 65 159 -21 69 -113 100 -185 63z"/>
+            </g>
+          </svg>
+        </div>
+        <span class="font-semibold tracking-tight">EasyPay</span>
+        <span class="text-slate-500 text-sm ml-3">© EasyPay</span>
+      </div>
+      <div class="text-sm text-slate-400 flex flex-wrap gap-4">
+        <a href="https://t.me/easypay_onboarding_bot" class="hover:text-white">Telegram-бот</a>
+        <a href="#founders" class="hover:text-white">Кто мы</a>
+        <a href="#faq" class="hover:text-white">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
