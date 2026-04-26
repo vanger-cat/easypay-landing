@@ -113,6 +113,18 @@
     }
     a.btn-secondary:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.24); }
 
+    /* btn-secondary внутри светлых glass-карточек: бирюзовый, как pillar-tag и underline */
+    .glass a.btn-secondary {
+      background: rgba(0,137,123,0.06);
+      border-color: rgba(0,137,123,0.20);
+      color: var(--teal);
+    }
+    .glass a.btn-secondary:hover {
+      background: rgba(0,137,123,0.10);
+      border-color: rgba(0,137,123,0.32);
+      color: var(--teal-deep);
+    }
+
     /* Eyebrow для секций */
     .section-label {
       letter-spacing: 0.18em; text-transform: uppercase; font-size: 12.5px; font-weight: 700;
@@ -146,6 +158,16 @@
       display: inline-flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: .85rem; color: white;
       border: 2px solid #fff;
+      overflow: hidden;
+    }
+    /* Когда внутри .avatar/.avatar-sm стоит <img> — заполняем контейнер с обрезкой */
+    .avatar > img,
+    .avatar-sm > img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      border-radius: inherit;
     }
 
     .todo {
@@ -308,7 +330,9 @@
           <div class="mt-10 flex items-center gap-4">
             <div class="flex -space-x-2" data-founders-avatars>
               <div class="avatar-sm" data-founder="ae" style="background: linear-gradient(135deg,#00897B 0%, #4CAF50 100%);">АЕ</div>
-              <div class="avatar-sm" data-founder="ak" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">АК</div>
+              <div class="avatar-sm" data-founder="ak" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">
+                <img src="assets/anton.jpg" alt="Антон Катков" loading="lazy" />
+              </div>
             </div>
             <div class="text-sm text-slate-400" data-founders-text>
               Сделано <a href="#founders" data-founder-link="ae" class="text-slate-200 underline underline-offset-2 hover:text-white">Андреем Ерохиным</a> и <a href="#founders" data-founder-link="ak" class="text-slate-200 underline underline-offset-2 hover:text-white">Антоном Катковым</a>. Можно списаться напрямую.
@@ -500,7 +524,9 @@
         <!-- ANTON -->
         <div class="glass rounded-3xl p-7 md:p-8">
           <div class="flex items-start gap-5">
-            <div class="avatar shrink-0">АК</div>
+            <div class="avatar shrink-0" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">
+              <img src="assets/anton.jpg" alt="Антон Катков" loading="lazy" />
+            </div>
             <div>
               <div class="text-2xl font-semibold tracking-tight">Антон Катков</div>
               <div class="text-sm text-slate-400 mt-1">Сооснователь · Бизнес, клиенты, операционка</div>
@@ -512,22 +538,20 @@
             </div>
           </div>
           <div class="mt-6 text-slate-300 space-y-3 leading-relaxed">
-            <p><span class="todo">TODO</span> Короткий абзац про профессиональный бэкграунд Антона: предыдущие продукты, компании, роли, сколько лет в продуктовой и предпринимательской работе, ключевые достижения и цифры.</p>
-            <p><span class="todo">TODO</span> Одно-два предложения про личную мотивацию и принципы в работе с партнёрами. Что для Антона значит «по-человечески сделать платёжку».</p>
+            <p>Предприниматель с 2011 года. В 2013 запустил первый международный бизнес — команда в России, юрлицо в США, клиенты в Америке, Европе и Азии. За 13 лет нашими продуктами пользовались 10M+ человек, одну из компаний довёл до $2M годового дохода. Прошёл Stripe-блокировки, битвы за success rate и переписки с комплаенсом. Часть аккаунтов отстояли, часть нет — оба опыта оказались одинаково ценными.</p>
+            <p>EasyPay вырос из инфраструктуры, которую мы годами строили для собственных продуктов. После 2022 друзья-предприниматели стали просить её в аренду — так стало понятно, что это уже самостоятельный продукт. Моя задача — снять с фаундера платёжную сложность, чтобы он занимался тем, ради чего начал бизнес.</p>
           </div>
           <blockquote class="mt-6 border-l-2 border-indigo-400/40 pl-4 text-slate-300 italic">
-            <span class="todo">TODO</span> Цитата от Антона на 1–2 предложения — про подход или ценность EasyPay. Что-то живое, не маркетинговое.
+            «Хочу, чтобы путь от идеи до первого платежа умещался в одну vibe-coding сессию — без юрлица, без банка, без месяцев бюрократии. И чтобы благодаря этому в мире появился первый solopreneur unicorn.»
           </blockquote>
           <div class="mt-6 flex flex-wrap gap-3">
-            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+            <a href="https://t.me/antonkatkov" target="_blank" rel="noopener" class="btn-secondary text-sm !py-2.5 !px-4">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.5 4.5 2.5 12l7 2 2 7L21.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Telegram
-              <span class="todo ml-1">TODO @handle</span>
             </a>
-            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+            <a href="https://www.linkedin.com/in/antonkatkov/" target="_blank" rel="noopener" class="btn-secondary text-sm !py-2.5 !px-4">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 1 0-4 0v7h-4v-7a6 6 0 0 1 6-6ZM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               LinkedIn
-              <span class="todo ml-1">TODO link</span>
             </a>
           </div>
         </div>
@@ -554,15 +578,13 @@
             «Сложность из бизнеса никуда не девается. Наша работа — взять её часть на себя.»
           </blockquote>
           <div class="mt-6 flex flex-wrap gap-3">
-            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+            <a href="https://t.me/andre_erokhin" target="_blank" rel="noopener" class="btn-secondary text-sm !py-2.5 !px-4">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21.5 4.5 2.5 12l7 2 2 7L21.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Telegram
-              <span class="todo ml-1">TODO @handle</span>
             </a>
-            <a href="#" class="btn-secondary text-sm !py-2.5 !px-4">
+            <a href="https://www.linkedin.com/in/andreyerokhin/" target="_blank" rel="noopener" class="btn-secondary text-sm !py-2.5 !px-4">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 1 0-4 0v7h-4v-7a6 6 0 0 1 6-6ZM2 9h4v12H2zM4 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               LinkedIn
-              <span class="todo ml-1">TODO link</span>
             </a>
           </div>
         </div>
@@ -810,7 +832,9 @@
             <div class="mt-5 flex items-center gap-3">
               <div class="flex -space-x-2">
                 <div class="avatar-sm" style="background: linear-gradient(135deg,#00897B 0%, #4CAF50 100%);">АЕ</div>
-                <div class="avatar-sm" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">АК</div>
+                <div class="avatar-sm" style="background: linear-gradient(135deg,#0B3B45 0%, #00897B 100%);">
+                  <img src="assets/anton.jpg" alt="Антон Катков" loading="lazy" />
+                </div>
               </div>
               <div class="text-sm text-slate-400">Андрей и Антон — на связи лично</div>
             </div>
