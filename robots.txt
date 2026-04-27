@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+Disallow: /index_archive_green.html
+Disallow: /index_archive_indigo.html
+
+User-agent: GPTBot
+Allow: /
+Disallow: /index_archive_green.html
+Disallow: /index_archive_indigo.html
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /index_archive_green.html
+Disallow: /index_archive_indigo.html
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /index_archive_green.html
+Disallow: /index_archive_indigo.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /index_archive_green.html
+Disallow: /index_archive_indigo.html
+
+Content-Signal: ai-train=no, search=yes, ai-input=no
+Sitemap: https://easypay.thenextgen.store/sitemap.xml
